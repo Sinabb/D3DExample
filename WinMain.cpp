@@ -8,7 +8,7 @@
 
 const wchar_t gClassName[]{ L"D3DWindowClass" };
 const wchar_t gTitle[]{ L"Direct3D Example" };
-const int wINDOW_WIDTH{ 800 };
+const int WINDOW_WIDTH{ 800 };
 const int WINDOW_HEIGHT{ 600 };
 
 HWND gHwnd{};
@@ -17,7 +17,7 @@ HINSTANCE gInstance{};
 using namespace Microsoft::WRL;
 //interface Directx Graphics Infrastructure
 ComPtr<IDXGISwapChain> gspSwapChain{};
-ComPtr<ID3D11Device> gspDeviec{};
+ComPtr<ID3D11Device> gspDevice{};
 ComPtr<ID3D11DeviceContext> gspDeviceContext{};
 
 ComPtr<ID3D11Texture2D> gspRenderTraget{};
@@ -43,9 +43,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpszClassName = gClassName;
 	wc.hInstance = gInstance;
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.lpfnWndProc = WindowProc;
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 
 	if (!RegisterClassEx(&wc))
@@ -54,7 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	RECT wr{ 0,0, wINDOW_WIDTH,WINDOW_HEIGHT };
+	RECT wr{ 0,0, WINDOW_WIDTH,WINDOW_HEIGHT };
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
     gHwnd = CreateWindowEx(NULL,
         gClassName,
@@ -124,36 +124,37 @@ void InitD3D()
         D3D11_SDK_VERSION,
         &scd,
         gspSwapChain.ReleaseAndGetAddressOf(),
-        gspDeviec.ReleaseAndGetAddressOf(),
+        gspDevice.ReleaseAndGetAddressOf(),
         nullptr,
         gspDeviceContext.ReleaseAndGetAddressOf());
 
     gspSwapChain->GetBuffer(0, IID_PPV_ARGS(gspRenderTraget.ReleaseAndGetAddressOf()));
-    gspDeviec->CreateRenderTargetView(
+    gspDevice->CreateRenderTargetView(
         gspRenderTraget.Get(),
         nullptr,
         gspRenderTargetView.ReleaseAndGetAddressOf());
 
     CD3D11_TEXTURE2D_DESC td(
         DXGI_FORMAT_D24_UNORM_S8_UINT,
-        wINDOW_WIDTH,
+        WINDOW_WIDTH,
         WINDOW_HEIGHT,
         1,
         1,
         D3D11_BIND_DEPTH_STENCIL
     );
-    gspDeviec->CreateTexture2D(&td, nullptr, gspDepthStencil.ReleaseAndGetAddressOf());
+    gspDevice->CreateTexture2D(&td, nullptr, gspDepthStencil.ReleaseAndGetAddressOf());
 
     //Depth Stencil View
-    D3D11_DEPTH_STENCIL_VIEW_DESC dsvd(D3D11_DSV_DIMENSION_TEXTURE2D);
-    gspDeviec->CreateDepthStencilView(
-        gspDepthStencil.Get(), &dsvd, gspDepthStencilView.ReleaseAndGetAddressOf());
+    CD3D11_DEPTH_STENCIL_VIEW_DESC dsvd(D3D11_DSV_DIMENSION_TEXTURE2D);
+    gspDevice->CreateDepthStencilView(
+        gspDepthStencil.Get(), &dsvd, gspDepthStencilView.ReleaseAndGetAddressOf());;
 
     // 파이프라인 설정
     gspDeviceContext->OMSetRenderTargets(1, gspRenderTargetView.GetAddressOf(), gspDepthStencilView.Get());
 
-    D3D11_VIEWPORT viewport(0.0f, 0.0f, 
-        static_cast<FLOAT>(wINDOW_WIDTH), static_cast<FLOAT>(WINDOW_HEIGHT));
+    CD3D11_VIEWPORT viewport(0.f, 0.0f, 
+        static_cast<FLOAT>(WINDOW_WIDTH), static_cast<FLOAT>(WINDOW_HEIGHT));
+
     gspDeviceContext->RSSetViewports(1, &viewport);
 }
 
@@ -178,7 +179,7 @@ void DestoryD3D()
     gspRenderTraget.Reset();
 
     gspSwapChain.Reset();
-    gspDeviec.Reset();
+    gspDevice.Reset();
     gspDeviceContext.Reset();
 
     DestroyWindow(gHwnd);
