@@ -28,4 +28,3 @@ private:
 protected:
 	void Render() override;
 };
-

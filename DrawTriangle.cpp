@@ -63,7 +63,7 @@ void DrawTriangle::InitPipeline()
 		0,
 		spVS.GetAddressOf(),
 		nullptr
-		);
+	);
 
 	D3DCompileFromFile(
 		L"PixelShader.hlsl",
@@ -87,11 +87,11 @@ void DrawTriangle::InitPipeline()
 
 	D3D11_INPUT_ELEMENT_DESC ied[]
 	{
-		{"position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"position", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 		{"color",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
 	};
 	mspDevice->CreateInputLayout(
-		ied,2,
+		ied, 2,
 		spVS->GetBufferPointer(), spVS->GetBufferSize(),
 		mspInputLayout.ReleaseAndGetAddressOf()
 	);
@@ -102,7 +102,7 @@ void DrawTriangle::Render()
 {
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
-	mspDeviceContext->IASetVertexBuffers(0,1,mspVerTexBuffer.GetAddressOf(),&stride,&offset);
+	mspDeviceContext->IASetVertexBuffers(0, 1, mspVerTexBuffer.GetAddressOf(), &stride, &offset);
 	mspDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	mspDeviceContext->Draw(3, 0);
 }

@@ -144,11 +144,11 @@ void D3DFramework::Render()
 
 void D3DFramework::Initialize(HINSTANCE hinstance, int width, int height)
 {
-	mScreenWidth = width;
-	mScreenHeight = height;
+    mScreenWidth = width;
+    mScreenHeight = height;
 
-	InitWindow(hinstance);
-	InitD3D();
+    InitWindow(hinstance);
+    InitD3D();
 }
 
 void D3DFramework::Destroy()
@@ -283,4 +283,3 @@ LRESULT WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     auto pFramework = reinterpret_cast<D3DFramework*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     return pFramework->MessageHandler(hwnd, message, wParam, lParam);
 }
-
