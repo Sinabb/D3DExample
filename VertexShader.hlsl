@@ -1,6 +1,6 @@
 struct VOut
 {
-    float4 position : SV_Position;
+    float4 position : SV_POSITION;
     float4 color : COLOR;
     
 };

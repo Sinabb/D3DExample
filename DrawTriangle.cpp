@@ -79,7 +79,7 @@ void DrawTriangle::InitPipeline()
 
 	mspDevice->CreateVertexShader(spVS->GetBufferPointer(), spVS->GetBufferSize(), nullptr,
 		mspVerTexShader.ReleaseAndGetAddressOf());
-	mspDevice->CreatePixelShader(spVS->GetBufferPointer(), spVS->GetBufferSize(), nullptr,
+	mspDevice->CreatePixelShader(spPS->GetBufferPointer(), spPS->GetBufferSize(), nullptr,
 		mspPixelShader.ReleaseAndGetAddressOf());
 
 	mspDeviceContext->VSSetShader(mspVerTexShader.Get(), nullptr, 0);
