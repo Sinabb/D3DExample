@@ -35,7 +35,7 @@ void D3DFramework::InitWindow(HINSTANCE hInstance)
         wr.bottom - wr.top,
         NULL,
         NULL,
-        hInstance,
+        hInstance, 
         NULL);
     if (mHwnd == NULL)
     {
