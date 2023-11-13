@@ -55,7 +55,7 @@ void D3DFramework::InitD3D()
 {
     DXGI_SWAP_CHAIN_DESC scd{};
     ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
-    scd.BufferCount = 1; // 프론트는 필수라 1개로 쳐서 백 버퍼 1개만 [작성 추가로 할 작업]
+    scd.BufferCount = 1; // 프론트는 필수라 1개로 쳐서 백 버퍼 1개만 [추가할 버퍼만 세기]
     scd.BufferDesc.Width = mScreenWidth;
     scd.BufferDesc.Height = mScreenHeight;
     scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
