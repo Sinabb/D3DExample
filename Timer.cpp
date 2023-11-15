@@ -17,7 +17,7 @@ Timer::Timer() :
 	long long countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
 
-	mdSeondsPerCount = 1.0 / countsPerSec;
+	mdSeondsPerCount = 1.0 / static_cast<double>(countsPerSec);
 
 }
 
@@ -45,7 +45,7 @@ void MyUtil::Timer::Stop()
 	}
 }
 
-void MyUtil::Timer::Resume()
+void Timer::Resume()
 {
 	if (mbStopped)
 	{
@@ -56,25 +56,49 @@ void MyUtil::Timer::Resume()
 		mllPrevTime = currTime;
 		mllStopTime = 0;
 		mbStopped = false;
-
 	}
 
 }
 
-void MyUtil::Timer::Update()
+void Timer::Update()
 {
+	if (mbStopped)
+	{
+		mdDeltaTime = 0.0;
+		return;
+	}
+
+	long long currTime;
+	QueryPerformanceCounter((LARGE_INTEGER*)&currTime); // È½¼ö
+	mllCurrTime = currTime;
+
+	mdDeltaTime = (mllCurrTime - mllPrevTime) * mdSeondsPerCount;
+
+	mllPrevTime = mllCurrTime;
+
+	if (mdDeltaTime < 0.0)
+	{
+		mdDeltaTime = 0.0;
+	}
 }
 
-float MyUtil::Timer::TotalTime() const
+float Timer::TotalTime() const
 {
-	return 0.0f;
+	if (mbStopped)
+	{
+		return static_cast<float>(mllStopTime - mllBaseTime - mllPausedTime) * mdSeondsPerCount;
+	}
+	else {
+		return static_cast<float>(mllCurrTime - mllBaseTime - mllPausedTime) * mdSeondsPerCount;
+	}
 }
 
-float MyUtil::Timer::DeltaTime() const
+float Timer::DeltaTime() const
 {
-	return 0.0f;
+	return static_cast<float> (mdDeltaTime * mfScale);
 }
 
-void MyUtil::Timer::SetScale(float scale)
+void Timer::SetScale(float scale)
 {
+	mfScale = scale;
 }

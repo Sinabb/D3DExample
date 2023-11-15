@@ -5,6 +5,8 @@
 #include <wrl/client.h>
 #include <d3d11.h>
 #include <string>
+#include "Timer.h"
+#include "Input.h"
 
 class D3DFramework
 {
@@ -17,9 +19,13 @@ protected:
 	bool mMinimized{ false };
 	bool mMaximized{ false };
 	bool mResizing{ false };
+	bool mPaused{ false };
 
 	HWND mHwnd{};
 	HINSTANCE mInstance{};
+	MyUtil::Timer mTimer;
+	MyUtil::Input mInput;
+	std::wstring mTitleText{};
 
 	//interface Directx Graphics Infrastructure
 	Microsoft::WRL::ComPtr<IDXGISwapChain> mspSwapChain{};
@@ -35,11 +41,13 @@ protected:
 private:
 	void InitWindow(HINSTANCE hinstance);
 	void InitD3D();
+	void CalculateFPS();
 
 protected:
 	void OnResize();
 	void RenderFrame();
 	virtual void Render();
+	virtual void Update(float delta);
 
 public:
 	virtual void Initialize(HINSTANCE hinstance, int width = 800, int height = 600);
