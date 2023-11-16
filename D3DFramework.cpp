@@ -237,7 +237,6 @@ LRESULT D3DFramework::MessageHandler(HWND hwnd, UINT message, WPARAM wParam, LPA
 
     switch (message)
     {
-
     case WM_KEYDOWN:
         mInput.SetKeyDown(static_cast<unsigned int> (wParam));
         break;
