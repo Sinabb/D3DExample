@@ -83,6 +83,14 @@ void DrawTriangle::InitTriangle()
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	mspDevice->CreateBlendState(&blendDesc, mspBlendState.ReleaseAndGetAddressOf());
+
+	bd = CD3D11_BUFFER_DESC
+	(
+		sizeof(MatrixBuffer),
+		D3D11_BIND_CONSTANT_BUFFER,
+		D3D11_USAGE_DEFAULT
+	);
+	mspDevice->CreateBuffer(&bd, nullptr, mspConstantBuffer.ReleaseAndGetAddressOf());
 }
 
 void DrawTriangle::InitPipeline()
@@ -134,6 +142,7 @@ void DrawTriangle::InitPipeline()
 		mspInputLayout.ReleaseAndGetAddressOf()
 	);
 	mspDeviceContext->IASetInputLayout(mspInputLayout.Get());
+	mspDeviceContext->VSSetConstantBuffers(0, 1, mspConstantBuffer.GetAddressOf());
 }
 
 HRESULT DrawTriangle::CreateTextureFormBMP()
@@ -205,10 +214,53 @@ HRESULT DrawTriangle::CreateTextureFormBMP()
 
 void DrawTriangle::Update(float delta)
 {
-	if (mInput.IsKeyDown(VK_SPACE))
+	if (mInput.IsKeyDown('Q'))
+	{
+		mRotationZ += DirectX::XM_PI * delta;
+	}
+	else if (mInput.IsKeyDown('E'))
+	{
+		mRotationZ -= DirectX::XM_PI * delta;
+	}
+
+	if (mInput.IsKeyDown(VK_UP) || mInput.IsKeyDown('W'))
+	{
+		mY += 1.0f * delta;
+	}
+	else if (mInput.IsKeyDown(VK_DOWN))
+	{
+		mY -= 1.0f * delta;
+	}
+
+	if (mInput.IsKeyDown(VK_LEFT))
+	{
+		mX -= 1.0f * delta;
+	}
+	else if (mInput.IsKeyDown(VK_RIGHT))
+	{
+		mX += 1.0f * delta;
+	}
+
+	if (mInput.IsKeyDown('1'))
+	{
+		mTimer.SetScale(1.0f);
+	}
+	else if (mInput.IsKeyDown('2'))
+	{
+		mTimer.SetScale(2.0f);
+	}
+	else if (mInput.IsKeyDown('3'))
+	{
+		mTimer.SetScale(0.5f);
+	}
+	mWrold = DirectX::XMMatrixIdentity();
+	mWrold *= DirectX::XMMatrixRotationZ(mRotationZ);
+	mWrold *= DirectX::XMMatrixTranslation(mX, mY, 0.0f);
+
+	/*if (mInput.IsKeyDown(VK_SPACE))
 	{
 		OutputDebugStringW(L"스페이스\n");
-	}
+	}*/
 }
 
 void DrawTriangle::Render()
@@ -221,6 +273,10 @@ void DrawTriangle::Render()
 	mspDeviceContext->PSSetSamplers(0, 1, mspSamplerState.GetAddressOf());
 	mspDeviceContext->PSSetShaderResources(0, 1, mspTextureView.GetAddressOf());
 	mspDeviceContext->OMSetBlendState(mspBlendState.Get(), nullptr, 0xffffffff);
+	
+	MatrixBuffer mb;
+	mb.world = DirectX::XMMatrixTranspose(mWrold);
+	mspDeviceContext->UpdateSubresource(mspConstantBuffer.Get(), 0, nullptr, &mb, 0, 0);
 	mspDeviceContext->Draw(4, 0);
 
 	/*D3D11_SAMPLER_DESC* p{};
