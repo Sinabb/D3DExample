@@ -26,6 +26,7 @@ void DrawTriangle::Destroy()
 	mspVerTexShader.Reset();
 
 	D3DFramework::Destroy();
+
 }
 
 void DrawTriangle::InitTriangle()
