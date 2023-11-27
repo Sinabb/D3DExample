@@ -12,7 +12,6 @@ void DrawTriangle::Initialize(HINSTANCE hInstance, int width, int height)
 	InitPipeline();
 
 	CreateTextureFormBMP();
-
 }
 
 void DrawTriangle::Destroy()
